@@ -4,18 +4,18 @@ const crypto = require('crypto');
 const axios = require('axios');
 
 class CVideoApi {
-  constructor(key, secret, host, port){
+  constructor(key, secret, host, port) {
     this.key = key;
     this.secret = secret;
     host = host || 'localhost';
     port = port || 80;
-    this.base_url = `http://${host}:${port}/sso/api/v1`
+    this.base_url = `http://${host}:${port}/sso/api/v1`;
   }
 
   getToken(params) {
     params = params || {};
-    let stringBuffer = [this.secret];
-    Object.keys(params).sort().forEach( key=> {
+    const stringBuffer = [this.secret];
+    Object.keys(params).sort().forEach( (key)=> {
       stringBuffer.push(key);
       stringBuffer.push(params[key]);
     });
@@ -23,38 +23,37 @@ class CVideoApi {
   }
 
   async listDevices() {
-    let params = {
+    const params = {
       token: this.getToken(),
       timestamp: Math.floor(new Date() / 1000),
-      appkey: this.key
+      appkey: this.key,
     };
-    let response = await axios.get(`${this.base_url}/trees/client`, {
-      params
+    const response = await axios.get(`${this.base_url}/trees/client`, {
+      params,
     });
     if (response.status != 200) {
       throw `Received response with error: ${response.status}`;
     }
-    return response.data; 
+    return response.data;
   }
 
   async getUrl(id, centertype) {
-    let params = {
+    const params = {
       centertype: centertype || 1,
-      id
+      id,
     };
-    let token = this.getToken(params);
+    const token = this.getToken(params);
     params.token = token;
     params.appkey = this.key;
     params.timestamp = Math.floor(new Date() / 1000);
-    let response = await axios.get(`${this.base_url}/real/urls`, {
-      params
+    const response = await axios.get(`${this.base_url}/real/urls`, {
+      params,
     });
     if (response.status != 200) {
       throw `Received response with error: ${response.status}`;
     }
-    return response.data; 
+    return response.data;
   }
-
 }
 
 module.exports = CVideoApi;
